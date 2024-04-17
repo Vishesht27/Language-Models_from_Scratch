@@ -105,7 +105,7 @@ class FeedForward(nn.Module):
         return x
 
 
-class SelfAttention(nn.Module):
+class MultiHeadAttentionBlock(nn.Module):
     def __init__(
             self,
             args: ModelArgs
@@ -122,7 +122,7 @@ class SelfAttention(nn.Module):
         # Indicates the dimension of each head, that is, the part of the embedding that each head will be responsible for
         self.head_dim = args.dim // args.n_heads
 
-        self.wq = nn.Linear(args.dim,args.n_heads*args.head_dim, bias=False)
+        self.wq = nn.Linear(args.dim,args.n_heads*self.head_dim, bias=False)
         self.wk = nn.Linear(args.dim,self.n_kv_heads*self.head_dim ,bias = False)
         self.wv = nn.Linear(args.dim,self.n_kv_heads*self.head_dim,bias = False)
         self.wo = nn.Linear(args.n_heads*self.head_dim,args.dim, bias = False)
@@ -185,7 +185,7 @@ class SelfAttention(nn.Module):
         value = value.transpose(1,2)
         key = key.transpose(1,2)
 
-        output = SelfAttention.attention(query, key, value, self.head_dim)
+        output = MultiHeadAttentionBlock.attention(query, key, value, self.head_dim)
 
         output = (output.transpose(1, 2).contiguous().view(batch_size, seq_len, -1))
         return self.wo(output)
@@ -200,7 +200,7 @@ class EncoderBlock(nn.Module):
         self.dim = args.dim
         self.head_dim = args.dim // args.n_heads
 
-        self.attention = SelfAttention(args)
+        self.attention = MultiHeadAttentionBlock(args)
         self.feed_forward = FeedForward(args)
 
 
