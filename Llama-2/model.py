@@ -129,7 +129,7 @@ class MultiHeadAttentionBlock(nn.Module):
 
         # Cache Values (used only in inference)
         self.cache_keys = torch.zeros((args.max_batch_size, args.max_seq_len, self.n_kv_heads,self.head_dim))
-        self.cache_values = torch.zeroes((args.max_batch_size, args.max_seq_len, self.n_kv_heads, self.head_dim))
+        self.cache_values = torch.zeros((args.max_batch_size, args.max_seq_len, self.n_kv_heads, self.head_dim))
 
     @staticmethod
     def attention(query, key, value, head_dim: int):
